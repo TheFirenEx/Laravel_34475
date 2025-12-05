@@ -1,3 +1,7 @@
 {
-    "Clients": "Klienci"
+    "Clients": "Klienci",
+    "Users": "Użytkownicy",
+    "Save": "Zapisz",
+    "Search": "Wyszukaj",
+    "Search by name or email": "Wyszukaj za pomocą imienia lub adresu email"
 }

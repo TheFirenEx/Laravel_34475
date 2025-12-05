@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\ClientController;
 use Laravel\Fortify\Features;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\TwoFactor;
 use App\Livewire\Settings\Appearance;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClientController;
 
 
 Route::get('/', function () {
@@ -26,6 +27,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('clients', ClientController::class)
         ->only(['index']);
+
+  
+    Route::get('users', [UserController::class, 'index'])->name('users.index');
+    Route::post('users/{user}/role', [UserController::class, 'updateRole'])
+        ->middleware('permission:user_manage')
+        ->name('users.updateRole');
 
     Route::get('settings/two-factor', TwoFactor::class)
         ->middleware(
