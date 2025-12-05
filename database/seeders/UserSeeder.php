@@ -14,24 +14,24 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::factory(100)->create()->withoutt;
+        \App\Models\User::factory(100)->create();
 
         \App\Models\User::factory()->create([
             'name' => 'Użytkownik Testowy',
-            'email' => 'user.test@loclahost',
+            'email' => 'user.test@localhost',
             'password' => Hash::make('12345678')
         ]);
 
         \App\Models\User::factory()->create([
             'name' => 'Pracownik Testowy',
-            'email' => 'worker.test@loclahost',
+            'email' => 'worker.test@localhost',
             'password' => Hash::make('12345678')
-        ])->assignRole(RoleType::WORKER->value);
+        ])->syncRoles([RoleType::WORKER->value]);
 
         \App\Models\User::factory()->create([
             'name' => 'Administrator Testowy',
-            'email' => 'admin.test@loclahost',
+            'email' => 'admin.test@localhost',
             'password' => Hash::make('12345678')
-        ])->assignRole(RoleType::ADMIN->value);
+        ])->syncRoles([RoleType::ADMIN->value]);
     }
 }

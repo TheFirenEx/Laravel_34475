@@ -35,11 +35,11 @@
                                 $sortLink = fn($col) => route('users.index', array_merge(request()->query(), ['sort' => $col, 'direction' => $toggleDirection($col)]));
                             @endphp
 
-                            <th class="p-3"><a href="{{ $sortLink('id') }}">#</a></th>
-                            <th class="p-3"><a href="{{ $sortLink('name') }}">{{ __('Name') }}</a></th>
-                            <th class="p-3"><a href="{{ $sortLink('email') }}">{{ __('Email') }}</a></th>
-                            <th class="p-3"><a href="{{ $sortLink('created_at') }}">{{ __('Created') }}</a></th>
-                            <th class="p-3">{{ __('Role') }}</th>
+                            <th class="p-3"><a href="{{ $sortLink('id') }}">{{ __('users.attributes.id') }}</a></th>
+                            <th class="p-3"><a href="{{ $sortLink('name') }}">{{ __('users.attributes.Name') }}</a></th>
+                            <th class="p-3"><a href="{{ $sortLink('email') }}">{{ __('users.attributes.Email') }}</a></th>
+                            <th class="p-3"><a href="{{ $sortLink('created_at') }}">{{ __('users.attributes.Created') }}</a></th>
+                            <th class="p-3">{{ __('users.attributes.Role') }}</th>
                         </tr>
                     </thead>
 
