@@ -20,6 +20,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => PermissionType::USER_ACCESS->value]);
         Permission::create(['name' => PermissionType::USER_ACCESSSELF->value]);
         Permission::create(['name' => PermissionType::USER_MANAGE-> value]);
+        Permission::create(['name' => PermissionType::USER_ROLE_UPDATE-> value]);
         
         Permission::create(['name' => PermissionType::WORKER_ACCESS->value]);
         Permission::create(['name' => PermissionType::WORKER_MANAGE->value]);

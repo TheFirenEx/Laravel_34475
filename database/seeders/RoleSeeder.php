@@ -25,6 +25,7 @@ class RoleSeeder extends Seeder
         $userRole = Role::findByName(RoleType::ADMIN->value);
         $userRole->givePermissionTo(PermissionType::USER_ACCESS->value);
         $userRole->givePermissionTo(PermissionType::USER_MANAGE->value);
+        $userRole->givePermissionTo(PermissionType::USER_ROLE_UPDATE->value);
         $userRole->givePermissionTo(PermissionType::WORKER_ACCESS->value);
         $userRole->givePermissionTo(PermissionType::WORKER_MANAGE->value);
         $userRole->givePermissionTo(PermissionType::RACHUNEK_ACCESS->value);

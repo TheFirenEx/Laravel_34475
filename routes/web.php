@@ -31,7 +31,6 @@ Route::middleware(['auth'])->group(function () {
   
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::post('users/{user}/role', [UserController::class, 'updateRole'])
-        ->middleware('permission:user_manage')
         ->name('users.updateRole');
 
     Route::get('settings/two-factor', TwoFactor::class)
