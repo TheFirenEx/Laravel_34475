@@ -7,38 +7,51 @@
 
             {{-- wyszukiwanie --}}
             <form method="GET" action="{{ route('users.index') }}" class="mb-4 flex gap-2">
+                <input type="hidden" name="sortBy" value="{{ $sortBy }}">
+                <input type="hidden" name="sortDirection" value="{{ $sortDirection }}">
+
                 <input
                     type="text"
-                    name="q"
-                    value="{{ request('q') }}"
+                    name="search"
+                    value="{{ $search }}"
                     placeholder="{{ __('Search by name or email') }}"
                     class="border rounded px-3 py-2 w-full"
                 />
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">{{ __('Search') }}</button>
+
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">
+                    {{ __('Search') }}
+                </button>
             </form>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full text-xs">
                     <colgroup>
-                        <col> <!-- ID -->
-                        <col> <!-- Name -->
-                        <col> <!-- Email -->
-                        <col> <!-- Created -->
-                        <col class="w-48"> <!-- Role -->
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                        <col class="w-48">
                     </colgroup>
 
                     <thead>
                         <tr class="text-left">
-                            {{-- sortowanie --}}
                             @php
-                                $toggleDirection = fn($col) => (request('sort') === $col && request('direction') === 'asc') ? 'desc' : 'asc';
-                                $sortLink = fn($col) => route('users.index', array_merge(request()->query(), ['sort' => $col, 'direction' => $toggleDirection($col)]));
+                                $toggle = fn($col) =>
+                                    ($sortBy === $col && $sortDirection === 'asc') ? 'desc' : 'asc';
+
+                                $sortLink = fn($col) =>
+                                    route('users.index', [
+                                        'search' => $search,
+                                        'sortBy' => $col,
+                                        'sortDirection' => $toggle($col),
+                                    ]);
                             @endphp
 
                             <th class="p-3"><a href="{{ $sortLink('id') }}">{{ __('users.attributes.id') }}</a></th>
                             <th class="p-3"><a href="{{ $sortLink('name') }}">{{ __('users.attributes.Name') }}</a></th>
                             <th class="p-3"><a href="{{ $sortLink('email') }}">{{ __('users.attributes.Email') }}</a></th>
                             <th class="p-3"><a href="{{ $sortLink('created_at') }}">{{ __('users.attributes.Created') }}</a></th>
+                            {{-- DO ZROBIENIA ODZIELNY KOLUMN --}}
                             <th class="p-3">{{ __('users.attributes.Role') }}</th>
                         </tr>
                     </thead>
@@ -53,15 +66,21 @@
 
                                 {{-- Zmiana roli --}}
                                 <td class="p-3">
-                                    <form method="POST" action="{{ route('users.updateRole', $user) }}" class="flex items-center gap-2">
-                                        @csrf
-                                        <select name="role" class="border rounded px-2 py-1">
-                                            @foreach($roles as $role)
-                                                <option value="{{ $role }}" @if($user->hasRole($role)) selected @endif>{{ $role }}</option>
-                                            @endforeach
-                                        </select>
-                                        <button type="submit" class="px-2 py-1 bg-gray-700 text-white rounded text-sm">{{ __('Save') }}</button>
-                                    </form>
+                                    @can('updateRole', $user)
+                                        <form method="POST" action="{{ route('users.updateRole', $user) }}" class="flex items-center gap-2">
+                                            @csrf
+                                            <select name="role" class="border rounded px-2 py-1">
+                                                @foreach($roles as $role)
+                                                    <option value="{{ $role }}" @if($user->hasRole($role)) selected @endif>
+                                                        {{ $role }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <button type="submit" class="px-2 py-1 bg-gray-700 text-white rounded text-sm">
+                                                {{ __('Save') }}
+                                            </button>
+                                        </form>
+                                    @endcan
                                 </td>
                             </tr>
                         @endforeach
@@ -70,7 +89,11 @@
             </div>
 
             <div class="mt-4">
-                {{ $users->links() }}
+                {{ $users->appends([
+                    'search' => $search,
+                    'sortBy' => $sortBy,
+                    'sortDirection' => $sortDirection,
+                ])->links() }}
             </div>
         </div>
     </section>
