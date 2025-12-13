@@ -5,40 +5,45 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use Illuminate\Validation\Rule;
+use Illuminate\Database\Eloquent\Builder;
+use App\Services\TableData\Filters\Filter;
+use App\Services\TableData\Sorting\SortBy;
+use App\Services\TableData\Pagination\Paginate;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class UserController extends Controller
 {
+    use AuthorizesRequests;
     
     public function index(Request $request)
     {
-        $query = User::query();
+        $this->authorize('viewAny', User::class);
+            
+        $request->validate([
+            'sortBy'=> ['nullable', Rule::in([null, 'id', 'name', 'email', 'created_at'])],
+            'sortDirection' => ['nullable', Rule::in([null, 'asc', 'desc'])],
+            'search' => ['nullable', 'string'],
+        ]);
 
-        // wyszukiwanie po name i email
-        if ($q = $request->query('q')) {
-            $query->where(function ($qry) use ($q) {
-                $qry->where('name', 'like', "%{$q}%")
-                    ->orWhere('email', 'like', "%{$q}%");
-            });
-        }
-
-        // sortowanie
-        $allowed = ['id', 'name', 'email', 'created_at'];
-        $sort = $request->query('sort', 'id');
-        $direction = $request->query('direction', 'desc') === 'asc' ? 'asc' : 'desc';
-        if (! in_array($sort, $allowed)) {
-            $sort = 'id';
-        }
-        $query->orderBy($sort, $direction);
-
-        $users = $query->with('roles')->paginate(15)->withQueryString();
-        $roles = Role::pluck('name');
-
-        return view('users.index', compact('users', 'roles', 'sort', 'direction'));
+        return view('users.index', [
+            'users' => User::query()
+                ->tap(new Filter('name', $request->search, true))
+                ->tap(new Filter('email', $request->search, true))
+                ->tap(new SortBy($request->sortBy, $request->sortDirection))
+                ->pipe(new Paginate),
+            'sortBy' => $request->input('sortBy', null),
+            'sortDirection' => $request->input('sortDirection', null),
+            'search' => $request->input('search', null),
+            'roles' => Role::pluck('name'),
+        ]);
     }
 
     //aktualizacja roli
     public function updateRole(Request $request, User $user)
     {
+         $this->authorize('updateRole', $user);
+
         $request->validate([
             'role' => 'required|string|exists:roles,name',
         ]);
