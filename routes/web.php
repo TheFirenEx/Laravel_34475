@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Users\UserTable;
 use Laravel\Fortify\Features;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Password;
@@ -8,7 +9,6 @@ use App\Livewire\Settings\Appearance;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
-
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,13 +25,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/password', Password::class)->name('user-password.edit');
     Route::get('settings/appearance', Appearance::class)->name('appearance.edit');
 
+
+
     Route::resource('clients', ClientController::class)
         ->only(['index']);
 
-  
-    Route::get('users', [UserController::class, 'index'])->name('users.index');
+    Route::get('users', UserTable::class)->name('users.index');
+
+    // Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::post('users/{user}/role', [UserController::class, 'updateRole'])
         ->name('users.updateRole');
+
+
+
 
     Route::get('settings/two-factor', TwoFactor::class)
         ->middleware(

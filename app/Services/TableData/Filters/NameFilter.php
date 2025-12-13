@@ -4,7 +4,7 @@ namespace App\Services\TableData\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 
-class NameFilterFilter
+class NameFilter
 {
 
     public function __construct(
